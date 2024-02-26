@@ -1,4 +1,4 @@
-package easy
+package easy00
 
 /**
  * Write a function that takes in a non-empty array of distinct integers and an

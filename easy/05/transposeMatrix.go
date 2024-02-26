@@ -1,4 +1,4 @@
-package easy
+package easy05
 
 func TransposeMatrix(matrix [][]int) [][]int {
 	if len(matrix) == 0 {

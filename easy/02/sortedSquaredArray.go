@@ -1,4 +1,4 @@
-package easy
+package easy02
 
 import (
 	"sort"

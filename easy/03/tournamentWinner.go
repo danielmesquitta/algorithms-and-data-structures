@@ -1,4 +1,4 @@
-package easy
+package easy03
 
 const HOME_TEAM_WON = 1
 
