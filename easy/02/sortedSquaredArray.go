@@ -4,26 +4,22 @@ import (
 	"sort"
 )
 
-func SortedSquaredArray(array []int) []int {
-	sortedArray := make([]int, len(array))
-
+// Complexity Analysis: O(n) time
+func BruteForceSortedSquaredArray(array []int) []int {
+	squares := make([]int, len(array))
 	for _, num := range array {
 		squaredNum := num * num
-		sortedArray = append(sortedArray, squaredNum)
+		squares = append(squares, squaredNum)
 	}
-
-	sort.Slice(sortedArray, func(i, j int) bool {
-		return sortedArray[i] < sortedArray[j]
-	})
-
-	return sortedArray
+	sort.Ints(squares)
+	return squares
 }
 
-func OptimalSortedSquaredArray(array []int) []int {
+// Complexity Analysis: O(n) time
+func SortedSquaredArray(array []int) []int {
 	squares := make([]int, len(array))
 	start := 0
 	end := len(array) - 1
-
 	for i := len(array) - 1; i >= 0; i-- {
 		if array[start]*-1 > array[end] {
 			squares[i] = array[start] * array[start]
@@ -33,6 +29,5 @@ func OptimalSortedSquaredArray(array []int) []int {
 			end -= 1
 		}
 	}
-
 	return squares
 }
