@@ -6,7 +6,6 @@ import (
 
 func generateAllSums(nums []int) []int {
 	sumSet := map[int]struct{}{}
-
 	var subsets func(index int, currentSum int)
 	subsets = func(index int, currentSum int) {
 		if index == len(nums) {
@@ -16,22 +15,17 @@ func generateAllSums(nums []int) []int {
 		subsets(index+1, currentSum+nums[index])
 		subsets(index+1, currentSum)
 	}
-
 	subsets(0, 0)
-
 	var sums []int
 	for sum := range sumSet {
 		sums = append(sums, sum)
 	}
-
 	sort.Ints(sums)
-
 	return sums
 }
 
-func NonConstructibleChange(coins []int) int {
+func BruteForceNonConstructibleChange(coins []int) int {
 	allSums := generateAllSums(coins)
-
 	for index, curr := range allSums {
 		if isLastItem := index+1 == len(allSums); isLastItem {
 			return curr + 1
@@ -44,23 +38,17 @@ func NonConstructibleChange(coins []int) int {
 			}
 		}
 	}
-
 	return -1
 }
 
-func ImprovedNonConstructibleChange(coins []int) int {
-	sort.Slice(coins, func(a, b int) bool {
-		return coins[a] < coins[b]
-	})
-
-	var sum int
-	for _, elem := range coins {
-		if elem > sum+1 {
+func NonConstructibleChange(coins []int) int {
+	sort.Ints(coins)
+	sum := 0
+	for _, coin := range coins {
+		if coin > sum+1 {
 			break
 		}
-
-		sum += elem
+		sum += coin
 	}
-
 	return sum + 1
 }
