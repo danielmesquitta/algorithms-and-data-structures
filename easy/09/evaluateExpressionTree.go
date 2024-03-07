@@ -1,8 +1,8 @@
 package easy09
 
-type BinaryTree struct {
+type Node struct {
 	Value       int
-	Left, Right *BinaryTree
+	Left, Right *Node
 }
 
 const (
@@ -12,31 +12,22 @@ const (
 	MULTIPLICATION = -4
 )
 
-func (root *BinaryTree) isLeaf() bool {
-	return root != nil && root.Left == nil && root.Right == nil
+func (n *Node) isLeaf() bool {
+	return n.Left == nil && n.Right == nil
 }
 
-func (root *BinaryTree) evaluateExpression() int {
-	if root.isLeaf() {
-		return root.Value
+func (n *Node) Evaluate() int {
+	if n.isLeaf() {
+		return n.Value
 	}
-
-	switch root.Value {
+	switch n.Value {
 	case ADDITION:
-		return root.Left.evaluateExpression() + root.Right.evaluateExpression()
+		return n.Left.Evaluate() + n.Right.Evaluate()
 	case SUBTRACTION:
-		return root.Left.evaluateExpression() - root.Right.evaluateExpression()
+		return n.Left.Evaluate() - n.Right.Evaluate()
 	case DIVISION:
-		return root.Left.evaluateExpression() / root.Right.evaluateExpression()
-	case MULTIPLICATION:
-		return root.Left.evaluateExpression() * root.Right.evaluateExpression()
+		return n.Left.Evaluate() / n.Right.Evaluate()
 	default:
-		return 0
+		return n.Left.Evaluate() * n.Right.Evaluate()
 	}
-}
-
-func EvaluateExpressionTree(tree *BinaryTree) int {
-	result := tree.evaluateExpression()
-
-	return result
 }

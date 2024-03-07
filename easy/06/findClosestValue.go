@@ -1,5 +1,7 @@
 package easy06
 
+import "math"
+
 type BST struct {
 	Value int
 	Left  *BST
@@ -7,20 +9,13 @@ type BST struct {
 }
 
 func (tree *BST) FindClosestValue(target int) int {
-	if tree == nil {
-		return 0
-	}
-
-	closestValue := tree.Value
-
+	closest := tree.Value
 	for tree != nil {
-		closestValueDistance := Abs(closestValue - target)
-		treeValueDistance := Abs(tree.Value - target)
-
-		if closestValueDistance > treeValueDistance {
-			closestValue = tree.Value
+		closestDistance := math.Abs(float64(closest - target))
+		treeDistance := math.Abs(float64(tree.Value - target))
+		if closestDistance > treeDistance {
+			closest = tree.Value
 		}
-
 		if target < tree.Value {
 			tree = tree.Left
 		} else if target > tree.Value {
@@ -29,13 +24,5 @@ func (tree *BST) FindClosestValue(target int) int {
 			break
 		}
 	}
-
-	return closestValue
-}
-
-func Abs(x int) int {
-	if x < 0 {
-		return x * -1
-	}
-	return x
+	return closest
 }

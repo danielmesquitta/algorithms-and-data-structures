@@ -5,10 +5,8 @@ import "sort"
 func ClassPhotos(redShirtHeights []int, blueShirtHeights []int) bool {
 	blueIsTaller := true
 	redIsTaller := true
-
 	sort.Ints(redShirtHeights)
 	sort.Ints(blueShirtHeights)
-
 	for i, red := range redShirtHeights {
 		blue := blueShirtHeights[i]
 		if blue >= red {
@@ -21,6 +19,5 @@ func ClassPhotos(redShirtHeights []int, blueShirtHeights []int) bool {
 			break
 		}
 	}
-
 	return blueIsTaller || redIsTaller
 }

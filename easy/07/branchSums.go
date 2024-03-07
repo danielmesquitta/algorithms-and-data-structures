@@ -1,33 +1,28 @@
 package easy07
 
-type BinaryTree struct {
+type Node struct {
 	Value       int
-	Left, Right *BinaryTree
+	Left, Right *Node
 }
 
-func (root *BinaryTree) isLeaf() bool {
-	return root != nil && root.Left == nil && root.Right == nil
+func (n *Node) IsLeaf() bool {
+	return n != nil && n.Left == nil && n.Right == nil
 }
 
-func (root *BinaryTree) setBranchSums(sums *[]int, sum int) {
-	if root == nil {
+func (n *Node) setBranchSums(sums *[]int, sum int) {
+	if n == nil {
 		return
 	}
-
-	sum += root.Value
-
-	if root.isLeaf() {
+	sum += n.Value
+	if n.IsLeaf() {
 		*sums = append(*sums, sum)
 	}
-
-	root.Left.setBranchSums(sums, sum)
-	root.Right.setBranchSums(sums, sum)
+	n.Left.setBranchSums(sums, sum)
+	n.Right.setBranchSums(sums, sum)
 }
 
-func BranchSums(root *BinaryTree) []int {
+func (n *Node) GetBranchSums() []int {
 	sums := []int{}
-
-	root.setBranchSums(&sums, 0)
-
+	n.setBranchSums(&sums, 0)
 	return sums
 }

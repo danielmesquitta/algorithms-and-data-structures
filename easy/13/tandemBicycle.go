@@ -4,26 +4,27 @@ import (
 	"slices"
 )
 
-func TandemBicycle(redShirtSpeeds []int, blueShirtSpeeds []int, fastest bool) int {
-	slices.Sort(redShirtSpeeds)
-
+func pairByShirts(redSpeeds []int, blueSpeeds []int, fastest bool) {
+	slices.Sort(redSpeeds)
 	if fastest {
-		slices.SortFunc(blueShirtSpeeds, func(a, b int) int {
+		slices.SortFunc(blueSpeeds, func(a, b int) int {
 			return b - a
 		})
 	} else {
-		slices.Sort(blueShirtSpeeds)
+		slices.Sort(blueSpeeds)
 	}
+}
 
+func TandemBicycle(redSpeeds []int, blueSpeeds []int, fastest bool) int {
+	pairByShirts(redSpeeds, blueSpeeds, fastest)
 	sum := 0
-	for i, red := range redShirtSpeeds {
-		blue := blueShirtSpeeds[i]
+	for i, red := range redSpeeds {
+		blue := blueSpeeds[i]
 		if red > blue {
 			sum += red
 		} else {
 			sum += blue
 		}
 	}
-
 	return sum
 }

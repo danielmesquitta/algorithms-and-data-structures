@@ -1,20 +1,18 @@
 package easy08
 
-type BinaryTree struct {
+type Node struct {
 	Value       int
-	Left, Right *BinaryTree
+	Left, Right *Node
 }
 
-func (root *BinaryTree) countDepth(depth int) int {
-	if root == nil {
+func (n *Node) countDepth(depth int) int {
+	if n == nil {
 		return 0
 	}
-
-	return depth + root.Left.countDepth(depth+1) + root.Right.countDepth(depth+1)
+	return depth + n.Left.countDepth(depth+1) + n.Right.countDepth(depth+1)
 }
 
-func NodeDepths(root *BinaryTree) int {
-	result := root.countDepth(0)
-
+func (n *Node) GetNodeDepths() int {
+	result := n.countDepth(0)
 	return result
 }

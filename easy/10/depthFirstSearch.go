@@ -5,10 +5,10 @@ type Node struct {
 	Children []*Node
 }
 
-func (n *Node) DepthFirstSearch(array []string) []string {
-	array = append(array, n.Name)
-	for _, children := range n.Children {
-		array = children.DepthFirstSearch(array)
+func (n *Node) DepthFirstSearch(arr []string) []string {
+	arr = append(arr, n.Name)
+	for _, child := range n.Children {
+		arr = child.DepthFirstSearch(arr)
 	}
-	return array
+	return arr
 }

@@ -4,39 +4,37 @@ import (
 	"slices"
 )
 
-func OptimalFreelancing(jobs []map[string]int) int {
-	totalPayment := 0
+func setAvailableDeadline(unavailableDeadlines map[int]struct{}, deadlinePtr *int) {
+	deadline := *deadlinePtr
+	if _, ok := unavailableDeadlines[deadline]; ok {
+		deadline--
+		setAvailableDeadline(unavailableDeadlines, &deadline)
+	}
+	*deadlinePtr = deadline
+}
 
-	// Sort from greatest to lowest payment
-	slices.SortFunc(jobs, func(a, b map[string]int) int {
+func sortByBestPayments(jobs []map[string]int) {
+	sortFunc := func(a, b map[string]int) int {
 		return b["payment"] - a["payment"]
-	})
+	}
+	slices.SortFunc(jobs, sortFunc)
+}
 
-	occupiedDeadlines := map[int]struct{}{}
-
+func OptimalFreelancing(jobs []map[string]int) int {
+	optimalPayment := 0
+	unavailable := map[int]struct{}{}
+	sortByBestPayments(jobs)
 	for _, job := range jobs {
 		deadline := job["deadline"]
-
 		if deadline > 7 {
 			deadline = 7
 		}
-
-		var findDeadlineAvailable func()
-		findDeadlineAvailable = func() {
-			if _, ok := occupiedDeadlines[deadline]; ok {
-				deadline--
-				findDeadlineAvailable()
-			}
-		}
-		findDeadlineAvailable()
-
+		setAvailableDeadline(unavailable, &deadline)
 		if deadline < 1 {
 			continue
 		}
-
-		occupiedDeadlines[deadline] = struct{}{}
-		totalPayment += job["payment"]
+		unavailable[deadline] = struct{}{}
+		optimalPayment += job["payment"]
 	}
-
-	return totalPayment
+	return optimalPayment
 }
