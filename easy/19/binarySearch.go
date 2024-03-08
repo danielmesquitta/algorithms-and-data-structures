@@ -2,11 +2,9 @@ package easy19
 
 func BinarySearch(array []int, target int) int {
 	start, end := 0, len(array)-1
-
 	for start <= end {
 		mid := (start + end) / 2
 		item := array[mid]
-
 		switch {
 		case item > target:
 			end = mid - 1
@@ -16,6 +14,5 @@ func BinarySearch(array []int, target int) int {
 			return mid
 		}
 	}
-
 	return -1
 }
