@@ -1,6 +1,10 @@
 package bst
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+	"math"
+)
 
 type BST struct {
 	Value       int
@@ -23,13 +27,10 @@ func (tree *BST) Contains(value int) bool {
 	switch {
 	case tree == nil:
 		return false
-
 	case value > tree.Value:
 		return tree.Right.Contains(value)
-
 	case value < tree.Value:
 		return tree.Left.Contains(value)
-
 	default:
 		return true
 	}
@@ -39,7 +40,6 @@ func (tree *BST) Remove(value int) *BST {
 	if tree == nil {
 		return tree
 	}
-
 	if value < tree.Value {
 		tree.Left = tree.Left.Remove(value)
 	} else if value > tree.Value {
@@ -61,7 +61,6 @@ func (tree *BST) Remove(value int) *BST {
 			tree.Right = tree.Right.Right
 		}
 	}
-
 	return tree
 }
 
@@ -76,51 +75,132 @@ func (tree *BST) Smallest() int {
 }
 
 func (tree *BST) Validate() bool {
-	isValid := true
-
-	var validate func(*BST, *bool)
-	validate = func(node *BST, isValidPtr *bool) {
+	var validate func(*BST, int, int) bool
+	validate = func(node *BST, min, max int) bool {
 		if node == nil {
-			return
+			return true
 		}
-		if node.Left != nil && node.Left.Value >= node.Value {
-			*isValidPtr = false
-			return
+		if node.Value < min || node.Value >= max {
+			return false
 		}
-		if node.Right != nil && node.Right.Value < node.Value {
-			*isValidPtr = false
-			return
-		}
-		validate(node.Left, isValidPtr)
-		validate(node.Right, isValidPtr)
+		return validate(node.Left, min, node.Value) &&
+			validate(node.Right, node.Value, max)
 	}
 
-	validate(tree, &isValid)
+	return validate(tree, math.MinInt, math.MaxInt)
+}
 
-	return isValid
+func (tree *BST) InOrderTraverse() []int {
+	return tree.inOrderTraverse(&[]int{})
+}
+
+func (tree *BST) inOrderTraverse(array *[]int) []int {
+	if tree == nil {
+		return *array
+	}
+	tree.Left.inOrderTraverse(array)
+	*array = append(*array, tree.Value)
+	tree.Right.inOrderTraverse(array)
+	return *array
+}
+
+func (tree *BST) PreOrderTraverse() []int {
+	return tree.preOrderTraverse(&[]int{})
+}
+
+func (tree *BST) preOrderTraverse(array *[]int) []int {
+	if tree == nil {
+		return *array
+	}
+	*array = append(*array, tree.Value)
+	tree.Left.preOrderTraverse(array)
+	tree.Right.preOrderTraverse(array)
+	return *array
+}
+
+func (tree *BST) PostOrderTraverse() []int {
+	return tree.postOrderTraverse(&[]int{})
+}
+
+func (tree *BST) postOrderTraverse(array *[]int) []int {
+	if tree == nil {
+		return *array
+	}
+	tree.Left.postOrderTraverse(array)
+	tree.Right.postOrderTraverse(array)
+	*array = append(*array, tree.Value)
+	return *array
 }
 
 func (tree *BST) Print() {
-	count := 5
+	var print func(*BST, string, string)
+	print = func(node *BST, prefix, childrenPrefix string) {
+		if node != nil {
+			fmt.Println(prefix + fmt.Sprint(node.Value))
 
-	var printBST func(*BST, int)
-	printBST = func(node *BST, space int) {
-		if node == nil {
-			return
+			if node.Left != nil || node.Right != nil {
+				if node.Left != nil {
+					print(
+						node.Left,
+						childrenPrefix+"├── ",
+						childrenPrefix+"│   ",
+					)
+				} else {
+					fmt.Println(childrenPrefix + "├── ")
+				}
+
+				if node.Right != nil {
+					print(
+						node.Right,
+						childrenPrefix+"└── ",
+						childrenPrefix+"    ",
+					)
+				} else {
+					fmt.Println(childrenPrefix + "└── ")
+				}
+			}
 		}
-
-		space += count
-
-		printBST(node.Right, space)
-
-		fmt.Print("\n")
-		for i := count; i < space; i++ {
-			fmt.Print(" ")
-		}
-		fmt.Println(node.Value)
-
-		printBST(node.Left, space)
 	}
+	print(tree, "", "")
+}
 
-	printBST(tree, 0)
+type JSONTree struct {
+	Tree Tree `json:"tree"`
+}
+
+type Tree struct {
+	Nodes []Node `json:"nodes"`
+	Root  string `json:"root"`
+}
+
+type Node struct {
+	ID    string `json:"id"`
+	Left  string `json:"left"`
+	Right string `json:"right"`
+	Value int    `json:"value"`
+}
+
+func (tree *BST) FromJSON(jsonTree JSONTree) {
+	nodes := make(map[string]*BST)
+	for _, node := range jsonTree.Tree.Nodes {
+		nodes[node.ID] = &BST{Value: node.Value}
+	}
+	for _, node := range jsonTree.Tree.Nodes {
+		if node.Left != "" {
+			nodes[node.ID].Left = nodes[node.Left]
+		}
+		if node.Right != "" {
+			nodes[node.ID].Right = nodes[node.Right]
+		}
+	}
+	*tree = *nodes[jsonTree.Tree.Root]
+}
+
+func (tree *BST) FromJSONString(jsonData string) {
+	jsonTree := JSONTree{}
+	err := json.Unmarshal([]byte(jsonData), &jsonTree)
+	if err != nil {
+		panic(err)
+	}
+	tree.FromJSON(jsonTree)
 }
