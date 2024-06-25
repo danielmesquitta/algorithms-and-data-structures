@@ -1,30 +1,20 @@
 package easy21
 
 func BubbleSort(array []int) []int {
-	left, right, end := 0, 1, len(array)-1
-
-	swappedDuringCycle := false
-
+	end := len(array) - 1
 	for end != 0 {
-		if array[left] > array[right] {
-			array[left], array[right] = array[right], array[left]
-			swappedDuringCycle = true
-		}
-
-		if finishedCycle := right == end; finishedCycle {
-			if !swappedDuringCycle {
-				break
+		swapped := false
+		for left := 0; left < end; left++ {
+			right := left + 1
+			if array[left] > array[right] {
+				array[left], array[right] = array[right], array[left]
+				swapped = true
 			}
-
-			end--
-			left = 0
-			right = 1
-			continue
 		}
-
-		left++
-		right++
+		if !swapped {
+			break
+		}
+		end--
 	}
-
 	return array
 }
