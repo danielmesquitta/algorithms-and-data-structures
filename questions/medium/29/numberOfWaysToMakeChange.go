@@ -1,18 +1,14 @@
 package medium29
 
-func NumberOfWaysToMakeChange(target int, denoms []int) int {
-	ways := make([]int, target+1)
-	ways[0] = 1
+func NumberOfWaysToMakeChange(target int, coins []int) int {
+	waysPerAmount := make([]int, target+1)
+	waysPerAmount[0] = 1
 
-	for _, denom := range denoms {
-		for i := denom; i <= target; i++ {
-			if denom > i {
-				continue
-			}
-
-			ways[i] += ways[i-denom]
+	for _, coin := range coins {
+		for amount := coin; amount <= target; amount++ {
+			waysPerAmount[amount] += waysPerAmount[amount-coin]
 		}
 	}
 
-	return ways[len(ways)-1]
+	return waysPerAmount[len(waysPerAmount)-1]
 }
